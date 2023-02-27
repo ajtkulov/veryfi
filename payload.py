@@ -45,14 +45,14 @@ class PayloadGenerator:
         conn = await asyncpg.connect(settings.settings.pg_connection_string)
         return PayloadGenerator(conn)
 
-    async def next_step(self):
+    async def next_step(self) -> None:
         payload = self.generate()
 
         await self.conn.execute('''INSERT INTO documents (ml_response) values($1);''', json.dumps(payload))
         await asyncio.sleep(3)
 
 
-async def async_loop():
+async def async_loop() -> None:
     payload_generator = await PayloadGenerator.create()
     while True:
         await payload_generator.next_step()

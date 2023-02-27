@@ -62,7 +62,7 @@ def aggregate(values) -> str:
     return json.dumps({'cnt': cnt, 'cnt_total': cnt_total, 'cnt_line_items': cnt_line_items})
 
 
-def calculate_and_save():
+def calculate_and_save() -> None:
     postgres_hook = PostgresHook(postgres_conn_id='pg')
     result = postgres_hook.get_records("SELECT ml_response FROM documents")
     res: list[Model] = [raw_to_model(i[0]) for i in result]
