@@ -55,11 +55,20 @@ def aggregate(values) -> str:
     cnt = {}
     cnt_total = {}
     cnt_line_items = {}
+    ocr_score_sum = {}
+    score_sum = {}
+    cnt_item_size = {}
     for i in values:
         cnt[i.business_id] = cnt.get(i.business_id, 0) + 1
         cnt_total[i.business_id] = cnt_total.get(i.business_id, 0) + len(i.total)
         cnt_line_items[i.business_id] = cnt_line_items.get(i.business_id, 0) + len(i.line_items)
-    return json.dumps({'cnt': cnt, 'cnt_total': cnt_total, 'cnt_line_items': cnt_line_items})
+        ocr_score_sum[i.business_id] = ocr_score_sum.get(i.business_id, 0) + sum(map(lambda x: x.ocr_score, i.total)) + sum(map(lambda x: x.ocr_score, i.line_items))
+        score_sum[i.business_id] = score_sum.get(i.business_id, 0) + sum(map(lambda x: x.score, i.total)) + sum(map(lambda x: x.score, i.line_items))
+        cnt_item_size[i.business_id] = cnt_item_size.get(i.business_id, 0) + sum(map(lambda x: 1, i.total)) + sum(map(lambda x: 1, i.line_items))
+
+    return json.dumps({'cnt': cnt, 'cnt_total': cnt_total, 'cnt_line_items': cnt_line_items,
+                       'ocr_score_sum': ocr_score_sum, 'score_sum': score_sum, 'cnt_item_size': cnt_item_size
+                       })
 
 
 def calculate_and_save() -> None:
